@@ -26,18 +26,36 @@
             
 # APIS Design :-
 
+# authRouter:-
     - SignUp (Post)
-    - Login (Post)
+    - Login and Logout (Post)
+# profileRouter:-
     - Profile (Get)
-    - Profile (Post)
     - Profile (Patch)
+    - Profile password (Patch)
     - Profile (Delete)
-    - SendRequest---- Ignore (Post)
-                 ---- Interested (Post)
+# connectionRequestRouter:-
+    - SendRequest---- Ignore(left swipe) (Post) 
+                 ---- Interested(right swipe) (Post)
     - ReviewRequest ----- Accepted (Post)
                     ----- Rejected (Post)
-    
-    - AllRequests (Get)
+# userRouter:-
+    - All receieved Requests (Get)
     - ConnectedRequests (Get)
+    - Feed- gets you the profiles of other users on platform (Get)
 
-        
+
+/////////////////////////////////////////////////////////////////////
+
+Notes :-
+
+1) validation should be on every field of your schema explore validator library. never trust the user . he can put anything inside our database.
+       include API level validations too if required(i.e. add validations in the controller's function too if need)
+
+       NEVER TRUST req.body
+
+2) learn thought process behind writing POST vs GET api.
+
+
+    
+// password i will be using for user sign in :- Ankur@123 , Priya@123"
