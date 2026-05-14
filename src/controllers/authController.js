@@ -39,7 +39,7 @@ export const signIn = async(req,res)=>{
         }
         const token = jwt.sign({userId:user._id},'Ankur_Raj123',{ expiresIn: '1h' });
         res.cookie("token",token) // token banane ke baad usko cookie me wrap kar ke hi bejhta hai server browser(client) ko..... and cookie browser me hi store hoti hai
-        res.status(200).send(token)
+        res.status(200).send(user)
         
     } catch (error) {
         res.status(400).send(`ERROR: ${error.message}`)
@@ -49,7 +49,7 @@ export const signIn = async(req,res)=>{
 export const signOut = async(req,res)=> {
     try {
        res.clearCookie("token");
-        res.send()
+        res.status(200).send('Logout Successful')
     } catch (error) {
         res.status(500).send('Error during log out')
     }

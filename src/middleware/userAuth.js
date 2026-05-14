@@ -5,7 +5,7 @@ const userAuth = async (req,res,next) => {
     try{
         const {token} = req.cookies;
         if (!token) {
-            throw new Error("Token is missing");
+           return res.status(401).send('You are Logged out, Please Login!')
         }
         const decodedObj = jwt.verify(token,'Ankur_Raj123');
         
