@@ -17,8 +17,13 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] // 👈 Explicit declaration for Live servers is mandatory
 }));
 
-// 2. Intercept and handle preflight OPTIONS requests globally 
-app.options(cors());
+// 2. Custom Safe Preflight Interceptor (Bypasses Express 5 string matching bugs)
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200); // Instantly reply 200 OK to the browser's preflight knock
+    }
+    next();
+});
 
 app.use(express.json());
 app.use(cookieParser())
