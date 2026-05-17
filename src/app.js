@@ -1,4 +1,5 @@
 import express from 'express';
+import 'dotenv/config';
 import connectDB from './config/database.js';
 import cookieParser from 'cookie-parser';
 import authRouter from './routes/authRoute.js';
@@ -21,17 +22,17 @@ app.use('/profile',profileRouter)
 app.use('/connection',connectionRouter)
 app.use('/user',userRouter)
 
-
+const PORT = process.env.PORT || 3000;
 
 connectDB().then(()=>{
     console.log('Database Connection Successfull....');
-    app.listen(3000,()=>{
-    console.log('app is listening on port 3000');
+    app.listen(PORT,()=>{
+    console.log(`app is listening on port ${PORT}`);
 })
     
 })
 .catch((error)=>{
-console.error('Database Connection cannot be estabished');
+console.error('Database connection failed:', error);
 
 })
 

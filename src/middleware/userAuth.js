@@ -3,11 +3,11 @@ import User from '../models/userModel.js'
 
 const userAuth = async (req,res,next) => {
     try{
-        const {token} = req.cookies;
+        const {token} = req.cookies;     
         if (!token) {
            return res.status(401).send('You are Logged out, Please Login!')
         }
-        const decodedObj = jwt.verify(token,'Ankur_Raj123');
+        const decodedObj = jwt.verify(token,process.env.JWT_SECRET);
         
         const user = await User.findById({_id:decodedObj.userId});
         if (user) {

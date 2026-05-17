@@ -4,7 +4,7 @@ import User from "../models/userModel.js";
 export const getReceivedRequests = async(req,res) => {
     try {
         const loggedInUser = req.user._id;
-        const allReceivedRequests = await ConnectionRequest.find({receiverUserId:loggedInUser,status:'interested'}).populate('senderUserId',['firstName','lastName'])
+        const allReceivedRequests = await ConnectionRequest.find({receiverUserId:loggedInUser,status:'interested'}).populate('senderUserId',['firstName','lastName','about','age','gender','photoUrl'])
         res.status(200).json({message:'Requests Fetched Successfully',data:allReceivedRequests})
     } catch (error) {
         res.status(500).json({error:error.message})
@@ -14,7 +14,7 @@ export const getReceivedRequests = async(req,res) => {
 export const getConnectedRequests = async(req,res)=>{
     try {
     const loggedInUser = req.user._id
-    const connectedRequests = await ConnectionRequest.find({$or:[{senderUserId:loggedInUser,status:'accepted'},{receiverUserId:loggedInUser,status:'accepted'}]}).populate('senderUserId',['firstName','lastName']).populate('receiverUserId',['firstName','lastName']);
+    const connectedRequests = await ConnectionRequest.find({$or:[{senderUserId:loggedInUser,status:'accepted'},{receiverUserId:loggedInUser,status:'accepted'}]}).populate('senderUserId',['firstName','lastName','age','gender','photoUrl','about']).populate('receiverUserId',['firstName','lastName','age','gender','photoUrl','about']);
     const mappedResult = connectedRequests.map((request)=>{
         if(request.senderUserId._id.toString() === loggedInUser.toString()){
             return request.receiverUserId
@@ -42,7 +42,7 @@ export const userFeed = async(req,res) =>{
                 hideUsers.add(connection.receiverUserId)
         });
         hideUsers.add(loggedInUser); 
-        const validUsers = await User.find({_id:{$nin:[...hideUsers]}}).select("firstName lastName").skip(skip).limit(limit)
+        const validUsers = await User.find({_id:{$nin:[...hideUsers]}}).select("firstName lastName email about photoUrl").skip(skip).limit(limit)
         res.status(200).json({message:"feed fetched successfully",data:validUsers})
 
     } catch (error) {

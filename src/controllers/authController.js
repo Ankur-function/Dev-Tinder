@@ -18,10 +18,16 @@ export const signUp = async(req,res)=>{
             email,
             password:hashPassword
         });
-        const userCreated = user.save();
-
-        res.send(userCreated)
+        const isUserExist = await User.findOne({email:body.email});
+        if (isUserExist) return res.status(400).json({message:'User Already Exists!'})
+        const userCreated = await user.save();
+        const token = jwt.sign({userId:userCreated._id},process.env.JWT_SECRET,{ expiresIn: '1h' });
+        res.cookie("token",token)
+        console.log('token------',token);
+        res.status(201).json({message:'User created Successfully',data:userCreated});
     } catch (error) {
+        console.log(error);
+        
        res.status(400).send('ERROR:',error.message)
     }
 }
@@ -37,7 +43,7 @@ export const signIn = async(req,res)=>{
         if (!validPassword) {
             throw new Error('Invalid Credentials')
         }
-        const token = jwt.sign({userId:user._id},'Ankur_Raj123',{ expiresIn: '1h' });
+        const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{ expiresIn: '1h' });
         res.cookie("token",token) // token banane ke baad usko cookie me wrap kar ke hi bejhta hai server browser(client) ko..... and cookie browser me hi store hoti hai
         res.status(200).send(user)
         
