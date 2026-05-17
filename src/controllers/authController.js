@@ -22,8 +22,11 @@ export const signUp = async(req,res)=>{
         if (isUserExist) return res.status(400).json({message:'User Already Exists!'})
         const userCreated = await user.save();
         const token = jwt.sign({userId:userCreated._id},process.env.JWT_SECRET,{ expiresIn: '1h' });
-        res.cookie("token",token)
-        console.log('token------',token);
+        res.cookie("token",token,{
+            httpOnly: true,// Protects against XSS attacks
+            secure: true,// REQUIRED for cross-domain HTTPS
+            sameSite: "none",// REQUIRED for cross-domain cookies})
+        });
         res.status(201).json({message:'User created Successfully',data:userCreated});
     } catch (error) {
         console.log(error);
@@ -44,7 +47,11 @@ export const signIn = async(req,res)=>{
             throw new Error('Invalid Credentials')
         }
         const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{ expiresIn: '1h' });
-        res.cookie("token",token) // token banane ke baad usko cookie me wrap kar ke hi bejhta hai server browser(client) ko..... and cookie browser me hi store hoti hai
+        res.cookie("token",token,{ // token banane ke baad usko cookie me wrap kar ke hi bejhta hai server browser(client) ko..... and cookie browser me hi store hoti hai
+            httpOnly: true,// Protects against XSS attacks
+            secure: true,// REQUIRED for cross-domain HTTPS
+            sameSite: "none",// REQUIRED for cross-domain cookies})
+        })
         res.status(200).send(user)
         
     } catch (error) {
