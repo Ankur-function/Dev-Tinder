@@ -18,7 +18,7 @@ app.use(cors({
 }));
 
 // 2. Intercept and handle preflight OPTIONS requests globally 
-app.options("/*", cors());
+app.options(cors());
 
 app.use(express.json());
 app.use(cookieParser())
