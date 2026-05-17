@@ -2,6 +2,11 @@ import jwt from 'jsonwebtoken'
 import User from '../models/userModel.js'
 
 const userAuth = async (req,res,next) => {
+
+    // 1. ALWAYS let OPTIONS preflight requests bypass authentication!
+    if (req.method === 'OPTIONS') {
+        return next(); 
+    }
     try{
         const {token} = req.cookies;     
         if (!token) {
