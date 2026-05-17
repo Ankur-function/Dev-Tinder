@@ -13,7 +13,8 @@ const app = express();
 app.use(cors({
     // origin:"http://localhost:5173", // when running locally
     origin:"https://dev-tinder-fe-six.vercel.app", // when running live
-    credentials:true
+    credentials:true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] // 👈 Explicit declaration for Live servers is mandatory
 }))
 app.use(express.json());
 app.use(cookieParser())
