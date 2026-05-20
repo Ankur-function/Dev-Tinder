@@ -49,6 +49,11 @@ export const paymentWebhook = async(req,res) => {
         
         const webhookSignature = req.headers['x-razorpay-signature'];
         console.log('webhookSignature===================',webhookSignature);
+
+        console.log('process.env.RAZORPAY_WEBHOOK_SECRET===================',process.env.RAZORPAY_WEBHOOK_SECRET);
+
+        console.log('req.body===================',JSON.stringify(req.body));
+
         
        const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
        console.log('isWebhookValid====',isWebhookValid);
