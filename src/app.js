@@ -7,12 +7,13 @@ import profileRouter from './routes/profileRouter.js';
 import connectionRouter from './routes/connectionRouter.js';
 import userRouter from './routes/userRouter.js';
 import cors from 'cors'
+import paymentRouter from './routes/paymentRoute.js';
 const app = express();
 
 
 app.use(cors({
-    // origin:"http://localhost:5173", // when running locally
-    origin:"https://dev-tinder-fe-six.vercel.app", // when running live
+    origin:"http://localhost:5173", // when running locally
+    // origin:"https://dev-tinder-fe-six.vercel.app", // when running live
     credentials:true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] // 👈 Explicit declaration for Live servers is mandatory
 }));
@@ -32,6 +33,7 @@ app.use('/',authRouter);
 app.use('/profile',profileRouter)
 app.use('/connection',connectionRouter)
 app.use('/user',userRouter)
+app.use('/payment',paymentRouter)
 
 const PORT = process.env.PORT || 3000;
 
