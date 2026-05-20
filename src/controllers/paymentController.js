@@ -47,10 +47,10 @@ export const paymentWebhook = async(req,res) => {
     try {
         console.log('Webhook called===========>>>>>>>>>>>>');
         
-        const webhookSignature = req.headers['X-Razorpay-Signature'];
+        const webhookSignature = req.headers['x-razorpay-signature'];
        const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
        if (!isWebhookValid) {
-            res.status(400).json({message: 'Webhook Signature is not valid'})
+            return res.status(400).json({message: 'Webhook Signature is not valid'})
        }
 
        // Update my payment status in DB

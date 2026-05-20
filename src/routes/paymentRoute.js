@@ -5,6 +5,6 @@ import userAuth from '../middleware/userAuth.js';
 const paymentRouter = express.Router();
 
 paymentRouter.post('/createOrder', userAuth, createOrder);
-paymentRouter.post('/payment/webhook',paymentWebhook)
+paymentRouter.post('/webhook',paymentWebhook)
 
 export default paymentRouter
