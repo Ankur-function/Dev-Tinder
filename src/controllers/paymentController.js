@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import Payment from "../models/paymentModel.js";
 import User from "../models/userModel.js";
 import { membershipAmount } from "../utils/constants.js";
@@ -52,15 +53,33 @@ export const paymentWebhook = async(req,res) => {
 
         console.log('process.env.RAZORPAY_WEBHOOK_SECRET===================',process.env.RAZORPAY_WEBHOOK_SECRET);
 
-        console.log('req.body===================',JSON.stringify(req.body));
+        // console.log('req.body===================',JSON.stringify(req.body));
 
         
-       const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
-       console.log('isWebhookValid====',isWebhookValid);
+    //    const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
+    //    console.log('isWebhookValid====',isWebhookValid);
        
-       if (!isWebhookValid) {
-            return res.status(400).json({message: 'Webhook Signature is not valid'})
-       }
+    //    if (!isWebhookValid) {
+    //         return res.status(400).json({message: 'Webhook Signature is not valid'})
+    //    }
+    // 🔒 1. Manually calculate the signature using your secret and the stringified body
+    const expectedSignature = crypto
+        .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
+        .update(JSON.stringify(req.body))
+        .digest('hex');
+
+    console.log('expectedSignature==============', expectedSignature);
+
+    // ⚖️ 2. Compare them
+    const isWebhookValid = (expectedSignature === webhookSignature);
+    console.log('isWebhookValid========', isWebhookValid);
+
+    if (!isWebhookValid) {
+        console.log('❌ Webhook verification failed. Signatures do not match!');
+        return res.status(400).json({ message: 'Webhook Signature is not valid' });
+    }
+
+    console.log('✅ Webhook verified successfully! Proceeding to database updates..................');
 
        // Update my payment status in DB
        const paymentDetails = req.body.payload.payment.entity;
