@@ -45,56 +45,29 @@ export const createOrder = async(req,res) =>{
 }
 
 export const paymentWebhook = async(req,res) => {
-    try {
-        console.log('Webhook called===========>>>>>>>>>>>>');
-        
+    try { 
         const webhookSignature = req.headers['x-razorpay-signature'];
-        console.log('webhookSignature===================',webhookSignature);
-
-        console.log('process.env.RAZORPAY_WEBHOOK_SECRET===================',process.env.RAZORPAY_WEBHOOK_SECRET);
-
-        // console.log('req.body===================',JSON.stringify(req.body));
-
-        
-    //    const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
-    //    console.log('isWebhookValid====',isWebhookValid);
-       
-    //    if (!isWebhookValid) {
-    //         return res.status(400).json({message: 'Webhook Signature is not valid'})
-    //    }
-    // 🔒 1. Manually calculate the signature using your secret and the stringified body
-    const expectedSignature = crypto
+        //    const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
+        // 🔒 1. Manually calculate the signature using your secret and the stringified body
+        const expectedSignature = crypto
         .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
         .update(JSON.stringify(req.body))
         .digest('hex');
 
-    console.log('expectedSignature==============', expectedSignature);
+        // ⚖️ 2. Compare them
+        const isWebhookValid = (expectedSignature === webhookSignature);
 
-    // ⚖️ 2. Compare them
-    const isWebhookValid = (expectedSignature === webhookSignature);
-    console.log('isWebhookValid========', isWebhookValid);
-
-    if (!isWebhookValid) {
-        console.log('❌ Webhook verification failed. Signatures do not match!');
-        return res.status(400).json({ message: 'Webhook Signature is not valid' });
-    }
-
-    console.log('✅ Webhook verified successfully! Proceeding to database updates..................');
-
+        if (!isWebhookValid) {
+            console.log('❌ Webhook verification failed. Signatures do not match!');
+            return res.status(400).json({ message: 'Webhook Signature is not valid' });
+        }
        // Update my payment status in DB
        const paymentDetails = req.body.payload.payment.entity;
-
-       console.log('paymentDetails============',paymentDetails);
-
        const payment = await Payment.findOne({orderId:paymentDetails.order_id});
-       console.log('payment============',payment);
-       
        payment.status = paymentDetails.status;
        await payment.save();
-
        // Update the user status as premium
        const user = await User.findOne({_id:payment.userId});
-       console.log('user============',user);
 
        user.isPremium = true
        user.membershipType = payment.notes.membershipType;
@@ -111,6 +84,20 @@ export const paymentWebhook = async(req,res) => {
        // return success response to razorpay
        return res.status(200).json({message:"Webhook received successfully"});
 
+    } catch (error) {
+        res.status(500).json({error:error.message});
+    }
+}
+
+export const isPremiumUser = async(req,res) => {
+    try {
+        const userId = req.user._id
+        const user = User.findOne({_id:userId});
+        if (user.isPremium) {
+            return res.json({isPremiumUser:true})
+        }else{
+            return res.json({isPremiumUser:false})
+        }
     } catch (error) {
         res.status(500).json({error:error.message});
     }
