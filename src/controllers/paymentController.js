@@ -92,7 +92,7 @@ export const paymentWebhook = async(req,res) => {
 export const isPremiumUser = async(req,res) => {
     try {
         const userId = req.user._id
-        const user = User.findOne({_id:userId});
+        const user = await User.findOne({_id:userId});
         console.log('user================',user);
         
         if (user.isPremium) {
