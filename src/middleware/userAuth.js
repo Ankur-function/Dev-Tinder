@@ -8,7 +8,9 @@ const userAuth = async (req,res,next) => {
         return next(); 
     }
     try{
-        const {token} = req.cookies;     
+        const {token} = req.cookies;
+        console.log('token========',token);
+             
         if (!token) {
            return res.status(401).send('You are Logged out, Please Login!')
         }
