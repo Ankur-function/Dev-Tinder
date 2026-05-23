@@ -8,6 +8,9 @@ import connectionRouter from './routes/connectionRouter.js';
 import userRouter from './routes/userRouter.js';
 import cors from 'cors'
 import paymentRouter from './routes/paymentRoute.js';
+import http, { createServer } from 'http'
+import initializeSocket from './utils/socket.js';
+import chatRouter from './routes/chatRoute.js';
 const app = express();
 
 
@@ -34,12 +37,17 @@ app.use('/profile',profileRouter)
 app.use('/connection',connectionRouter)
 app.use('/user',userRouter)
 app.use('/payment',paymentRouter)
+app.use('/chat',chatRouter)
+
+const httpServer = http.createServer(app);
+
+initializeSocket(httpServer);
 
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(()=>{
     console.log('Database Connection Successfull....');
-    app.listen(PORT,()=>{
+    httpServer.listen(PORT,()=>{
     console.log(`app is listening on port ${PORT}`);
 })
     

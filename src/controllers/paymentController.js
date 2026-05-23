@@ -93,8 +93,7 @@ export const isPremiumUser = async(req,res) => {
     try {
         const userId = req.user._id
         const user = await User.findOne({_id:userId});
-        console.log('user================',user);
-        
+
         if (user.isPremium) {
             return res.json({isPremiumUser:true})
         }else{

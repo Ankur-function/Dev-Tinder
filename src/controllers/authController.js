@@ -49,8 +49,8 @@ export const signIn = async(req,res)=>{
         const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{ expiresIn: '1h' });
         res.cookie("token",token,{ // token banane ke baad usko cookie me wrap kar ke hi bejhta hai server browser(client) ko..... and cookie browser me hi store hoti hai
             httpOnly: true,// Protects against XSS attacks
-            secure: true,// REQUIRED for cross-domain HTTPS
-            sameSite: "none",// REQUIRED for cross-domain cookies})
+            // secure: true,// REQUIRED for cross-domain HTTPS
+            // sameSite: "none",// REQUIRED for cross-domain cookies})
         })
         res.status(200).send(user)
         
